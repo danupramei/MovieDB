@@ -93,6 +93,7 @@ public class MoviesFragment extends BaseFragment implements MoviesPreserter.View
             recycler_movies.setNestedScrollingEnabled(true);
             recycler_movies.setAdapter(mAdapter);
         }
+        mAdapter.setOnItemClickListener(MoviesFragment.this);
 
         switch (status){
             case STATUS_PROGRESS:
@@ -100,7 +101,6 @@ public class MoviesFragment extends BaseFragment implements MoviesPreserter.View
                 break;
             case STATUS_SUKSES:
                 hideProgressDialog();
-                mAdapter.setOnItemClickListener(MoviesFragment.this);
                 recycler_movies.addOnScrollListener(new PaginationListener(layoutManager) {
                     @Override
                     public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {

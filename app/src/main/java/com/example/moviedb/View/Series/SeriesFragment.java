@@ -94,6 +94,7 @@ public class SeriesFragment extends BaseFragment implements SeriesPreserter.View
             recycler_series.setNestedScrollingEnabled(true);
             recycler_series.setAdapter(mAdapter);
         }
+        mAdapter.setOnItemClickListener(SeriesFragment.this);
 
         switch (status){
             case STATUS_PROGRESS:
@@ -101,7 +102,6 @@ public class SeriesFragment extends BaseFragment implements SeriesPreserter.View
                 break;
             case STATUS_SUKSES:
                 hideProgressDialog();
-                mAdapter.setOnItemClickListener(SeriesFragment.this);
                 recycler_series.addOnScrollListener(new PaginationListener(layoutManager) {
                     @Override
                     public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {

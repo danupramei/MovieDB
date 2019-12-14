@@ -34,7 +34,7 @@ public class AdapterDetailImage extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return images.size();
+        return images == null ? 0 : images.size();
     }
 
     @Override

@@ -78,7 +78,7 @@ public class DetailPreserter {
 
                     @Override
                     public void onNext(ImagesDetail imagesDetail) {
-                            view.showImageSlide(imagesDetail);
+                        view.showImageSlide(imagesDetail);
                     }
 
                     @Override

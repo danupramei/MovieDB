@@ -134,7 +134,7 @@ public class DetailActivity extends AppCompatActivity implements DetailPreserter
     @Override
     public void showImageSlide(ImagesDetail imagesDetail) {
         mPager.setAdapter(new AdapterDetailImage(DetailActivity.this, imagesDetail.getBackdrops()));
-        if (imagesDetail.getBackdrops().size() > 1) {
+        if (imagesDetail.getBackdrops() != null && imagesDetail.getBackdrops().size() > 1) {
             indicator.setViewPager(mPager);
         }
     }
