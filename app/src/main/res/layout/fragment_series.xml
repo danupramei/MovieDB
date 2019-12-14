@@ -70,8 +70,7 @@
             android:layout_marginTop="8dp"
             android:background="@drawable/background_radius"
             android:orientation="horizontal"
-            android:padding="10dp"
-            android:visibility="gone">
+            android:padding="10dp">
 
             <EditText
                 android:id="@+id/et_search_series"

@@ -22,6 +22,11 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.example.moviedb.Util.DbContract.MovieEntry.COLUMN_NAME_SORTING;
+import static com.example.moviedb.Util.DbContract.MovieEntry.COLUMN_NAME_ID;
+import static com.example.moviedb.Util.DbContract.MovieEntry.COLUMN_NAME_PATH_IMG;
+import static com.example.moviedb.Util.DbContract.MovieEntry.COLUMN_NAME_RATING;
+import static com.example.moviedb.Util.DbContract.MovieEntry.COLUMN_NAME_TITLE;
 import static com.example.moviedb.Util.DbContract.MovieEntry.TABLE_SERIES;
 import static com.example.moviedb.Util.StatusView.STATUS_GAGAL;
 import static com.example.moviedb.Util.StatusView.STATUS_NOCONNECTION;
@@ -43,11 +48,13 @@ public class SeriesPreserter {
         dbHelper = new DbHelper(context);
     }
 
-    void loadSeriesTranding(String time) {
-        view.setAdapterSeries(adapterSeriesList, STATUS_PROGRESS, 1);
-        adapterSeriesList = new AdapterSeriesList(readSQLMovie(), context);
-        view.setAdapterSeries(adapterSeriesList, 0, 1);
-        mApiSeries.getSeriesTranding(time, API_KEY)
+    void loadSeriesTranding(String time, int currentPage) {
+        if (currentPage == 1){
+            adapterSeriesList = new AdapterSeriesList(readSQLMovie(time), context);
+            view.setAdapterSeries(adapterSeriesList, STATUS_PROGRESS, 1);
+        }
+
+        mApiSeries.getSeriesTranding(time, API_KEY, currentPage)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<SeriesList>() {
@@ -58,9 +65,13 @@ public class SeriesPreserter {
                     @Override
                     public void onNext(SeriesList seriesList) {
                         if (seriesList != null) {
-                            insertToSQLMovie(seriesList);
-                            adapterSeriesList = new AdapterSeriesList(seriesList.getResults(), context);
-                            view.setAdapterSeries(adapterSeriesList, STATUS_SUKSES, 1);
+                            if (currentPage == 1) {
+                                insertToSQLMovie(seriesList, time);
+                                adapterSeriesList = new AdapterSeriesList(seriesList.getResults(), context);
+                            } else {
+                                adapterSeriesList.addItems(seriesList.getResults());
+                            }
+                            view.setAdapterSeries(adapterSeriesList, STATUS_SUKSES, seriesList.getTotalPages());
                         } else {
                             view.setAdapterSeries(adapterSeriesList, STATUS_GAGAL,1);
                         }
@@ -84,8 +95,10 @@ public class SeriesPreserter {
 
     void loadSeriesBySort(String sort, int currentPage) {
         if (currentPage == 1){
+            adapterSeriesList = new AdapterSeriesList(readSQLMovie(sort), context);
             view.setAdapterSeries(adapterSeriesList, STATUS_PROGRESS, 1);
         }
+
         mApiSeries.getSortSeries(sort, API_KEY, currentPage)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -99,12 +112,12 @@ public class SeriesPreserter {
                     public void onNext(SeriesList seriesList) {
                         if (seriesList != null) {
                             if (currentPage == 1) {
+                                insertToSQLMovie(seriesList, sort);
                                 adapterSeriesList = new AdapterSeriesList(seriesList.getResults(), context);
                             } else {
                                 adapterSeriesList.addItems(seriesList.getResults());
                             }
                             view.setAdapterSeries(adapterSeriesList, STATUS_SUKSES, seriesList.getTotalPages());
-
                         } else {
                             view.setAdapterSeries(adapterSeriesList, STATUS_GAGAL,1);
                         }
@@ -112,7 +125,12 @@ public class SeriesPreserter {
 
                     @Override
                     public void onError(Throwable e) {
-
+                        if (e instanceof IOException) {
+                            view.setAdapterSeries(adapterSeriesList, STATUS_NOCONNECTION,1);
+                        }
+                        else {
+                            view.setAdapterSeries(adapterSeriesList, STATUS_GAGAL,1);
+                        }
                     }
 
                     @Override
@@ -149,7 +167,12 @@ public class SeriesPreserter {
 
                     @Override
                     public void onError(Throwable e) {
-
+                        if (e instanceof IOException) {
+                            view.setAdapterSeries(adapterSeriesList, STATUS_NOCONNECTION,1);
+                        }
+                        else {
+                            view.setAdapterSeries(adapterSeriesList, STATUS_GAGAL,1);
+                        }
                     }
 
                     @Override
@@ -159,8 +182,9 @@ public class SeriesPreserter {
                 });
     }
 
-    void insertToSQLMovie(SeriesList seriesLists){
-        dbHelper.deleteAll(TABLE_SERIES);
+    void insertToSQLMovie(SeriesList seriesLists, String sort){
+        String[] wheres = {sort};
+        dbHelper.deleteAll(TABLE_SERIES, wheres);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         // Create a new map of values, where column names are the keys
@@ -171,30 +195,35 @@ public class SeriesPreserter {
             Double rated = seriesLists.getResults().get(i).getVoteAverage();
             String img = seriesLists.getResults().get(i).getPosterPath();
 
-            values.put(DbContract.MovieEntry.COLUMN_NAME_ID, id);
-            values.put(DbContract.MovieEntry.COLUMN_NAME_TITLE, title);
-            values.put(DbContract.MovieEntry.COLUMN_NAME_RATING, rated);
-            values.put(DbContract.MovieEntry.COLUMN_NAME_PATH_IMG, img);
+            values.put(COLUMN_NAME_ID, id);
+            values.put(COLUMN_NAME_TITLE, title);
+            values.put(COLUMN_NAME_RATING, rated);
+            values.put(COLUMN_NAME_PATH_IMG, img);
+            values.put(COLUMN_NAME_SORTING, sort);
             db.insert(DbContract.MovieEntry.TABLE_SERIES, null, values);
         }
     }
 
-    List<SeriesList> readSQLMovie(){
+    List<SeriesList> readSQLMovie(String sort){
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         String[] projection = {
                 BaseColumns._ID,
-                DbContract.MovieEntry.COLUMN_NAME_ID,
-                DbContract.MovieEntry.COLUMN_NAME_TITLE,
-                DbContract.MovieEntry.COLUMN_NAME_RATING,
-                DbContract.MovieEntry.COLUMN_NAME_PATH_IMG
+                COLUMN_NAME_ID,
+                COLUMN_NAME_TITLE,
+                COLUMN_NAME_RATING,
+                COLUMN_NAME_PATH_IMG,
+                COLUMN_NAME_SORTING
         };
 
+        // Filter results WHERE "title" = 'My Title'
+        String selection = COLUMN_NAME_SORTING + " = ?";
+        String[] wheres = {sort};
         Cursor cursor = db.query(
-                DbContract.MovieEntry.TABLE_SERIES,   // The table to query
+                TABLE_SERIES,   // The table to query
                 projection,             // The array of columns to return (pass null to get all)
-                null,              // The columns for the WHERE clause
-                null,          // The values for the WHERE clause
+                selection,              // The columns for the WHERE clause
+                wheres,          // The values for the WHERE clause
                 null,                   // don't group the rows
                 null,                   // don't filter by row groups
                 null               // The sort order

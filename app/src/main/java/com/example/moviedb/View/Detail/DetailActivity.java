@@ -111,7 +111,7 @@ public class DetailActivity extends AppCompatActivity implements DetailPreserter
             finish();
         }
     }
-    
+
     @Override
     public void showDetail(Detail detail, int status) {
         switch (status){

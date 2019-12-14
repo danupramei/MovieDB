@@ -100,7 +100,9 @@ public class AdapterSeriesList extends RecyclerView.Adapter<AdapterSeriesList.My
     }
 
     public void clear() {
-        seriesLists.clear();
-        notifyDataSetChanged();
+        if (seriesLists != null){
+            seriesLists.clear();
+            notifyDataSetChanged();
+        }
     }
 }

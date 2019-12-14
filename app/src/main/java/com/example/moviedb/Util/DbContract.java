@@ -13,6 +13,7 @@ public final class DbContract {
         public static final String COLUMN_NAME_TITLE = "title";
         public static final String COLUMN_NAME_RATING = "rating";
         public static final String COLUMN_NAME_PATH_IMG = "path_img";
+        public static final String COLUMN_NAME_SORTING = "sort";
     }
 
 }

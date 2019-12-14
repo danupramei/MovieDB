@@ -97,7 +97,9 @@ public class AdapterMoviesList extends RecyclerView.Adapter<AdapterMoviesList.My
     }
 
     public void clear() {
-        moviesListData.clear();
-        notifyDataSetChanged();
+        if (moviesListData != null){
+            moviesListData.clear();
+            notifyDataSetChanged();
+        }
     }
 }

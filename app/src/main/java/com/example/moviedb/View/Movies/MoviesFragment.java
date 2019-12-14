@@ -60,7 +60,7 @@ public class MoviesFragment extends BaseFragment implements MoviesPreserter.View
 
         //Presenter
         presenter = new MoviesPreserter(this, getContext());
-        presenter.loadMoviesTranding(DAILY);
+        presenter.loadMoviesTranding(DAILY, currentPage);
 
         et_search_movies.addTextChangedListener(new TextWatcher() {
             @Override
@@ -143,19 +143,15 @@ public class MoviesFragment extends BaseFragment implements MoviesPreserter.View
         if (searchKey == null || searchKey.equals("")){
             switch (sorting){
                 case "Tranding Daily":
-                    search_bar.setVisibility(View.GONE);
-                    presenter.loadMoviesTranding(DAILY);
+                    presenter.loadMoviesTranding(DAILY, currentPage);
                     break;
                 case "Tranding Weekly":
-                    search_bar.setVisibility(View.GONE);
-                    presenter.loadMoviesTranding(WEEKLY);
+                    presenter.loadMoviesTranding(WEEKLY, currentPage);
                     break;
                 case "Popular":
-                    search_bar.setVisibility(View.VISIBLE);
                     presenter.loadMoviesBySort(POPULAR, currentPage);
                     break;
                 case "Top Rated":
-                    search_bar.setVisibility(View.VISIBLE);
                     presenter.loadMoviesBySort(TOP_RATED, currentPage);
                     break;
             }

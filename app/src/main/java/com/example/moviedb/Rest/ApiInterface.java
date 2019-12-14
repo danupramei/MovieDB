@@ -13,9 +13,9 @@ import retrofit2.http.Query;
 public interface ApiInterface {
     // TRANDING
     @GET("trending/movie/{time_window}")
-    Observable<MoviesList> getMoviesTranding(@Path("time_window") String time_window, @Query("api_key") String api_key);
+    Observable<MoviesList> getMoviesTranding(@Path("time_window") String time_window, @Query("api_key") String api_key, @Query("page") int page);
     @GET("trending/tv/{time_window}")
-    Observable<SeriesList> getSeriesTranding(@Path("time_window") String time_window, @Query("api_key") String api_key);
+    Observable<SeriesList> getSeriesTranding(@Path("time_window") String time_window, @Query("api_key") String api_key, @Query("page") int page);
 
     // MOVIES
     @GET("movie/{sort}")

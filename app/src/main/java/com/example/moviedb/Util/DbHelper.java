@@ -11,7 +11,8 @@ public class DbHelper extends SQLiteOpenHelper {
                     DbContract.MovieEntry.COLUMN_NAME_ID + " INTEGER," +
                     DbContract.MovieEntry.COLUMN_NAME_TITLE + " TEXT," +
                     DbContract.MovieEntry.COLUMN_NAME_RATING + " DOUBLE," +
-                    DbContract.MovieEntry.COLUMN_NAME_PATH_IMG + " TEXT)";
+                    DbContract.MovieEntry.COLUMN_NAME_PATH_IMG + " TEXT," +
+                    DbContract.MovieEntry.COLUMN_NAME_SORTING + " TEXT)";
 
     private static final String SQL_CREATE_SERIES =
             "CREATE TABLE " + DbContract.MovieEntry.TABLE_SERIES + " (" +
@@ -19,7 +20,8 @@ public class DbHelper extends SQLiteOpenHelper {
                     DbContract.MovieEntry.COLUMN_NAME_ID + " INTEGER," +
                     DbContract.MovieEntry.COLUMN_NAME_TITLE + " TEXT," +
                     DbContract.MovieEntry.COLUMN_NAME_RATING + " DOUBLE," +
-                    DbContract.MovieEntry.COLUMN_NAME_PATH_IMG + " TEXT)";
+                    DbContract.MovieEntry.COLUMN_NAME_PATH_IMG + " TEXT," +
+                    DbContract.MovieEntry.COLUMN_NAME_SORTING + " TEXT)";
 
     // If you change the database schema, you must increment the database version.
     public static final int DATABASE_VERSION = 1;
@@ -40,9 +42,12 @@ public class DbHelper extends SQLiteOpenHelper {
 
     }
 
-    public void deleteAll(String table) {
+    public void deleteAll(String table, String[] selectionArgs) {
         SQLiteDatabase db = getWritableDatabase();
-        db.execSQL("delete from "+ table);
-        db.close();
+        // Define 'where' part of query.
+        String selection = DbContract.MovieEntry.COLUMN_NAME_SORTING + " LIKE ?";
+        // Issue SQL statement.
+        db.delete(table, selection, selectionArgs);
+
     }
 }

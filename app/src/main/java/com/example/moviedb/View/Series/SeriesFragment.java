@@ -61,7 +61,7 @@ public class SeriesFragment extends BaseFragment implements SeriesPreserter.View
 
         //Presenter
         presenter = new SeriesPreserter(this, getContext());
-        presenter.loadSeriesTranding(DAILY);
+        presenter.loadSeriesTranding(DAILY, currentPage);
 
         et_search_series.addTextChangedListener(new TextWatcher() {
             @Override
@@ -111,7 +111,6 @@ public class SeriesFragment extends BaseFragment implements SeriesPreserter.View
                         }
                     }
                 });
-//                mAdapter.setCallback(IWorkshopListActivity.this);
                 break;
             case STATUS_NO_DATA:
                 hideProgressDialog();
@@ -145,19 +144,15 @@ public class SeriesFragment extends BaseFragment implements SeriesPreserter.View
         if (searchKey == null || searchKey.equals("")){
             switch (sorting){
                 case "Tranding Daily":
-                    search_bar.setVisibility(View.GONE);
-                    presenter.loadSeriesTranding(DAILY);
+                    presenter.loadSeriesTranding(DAILY, currentPage);
                     break;
                 case "Tranding Weekly":
-                    search_bar.setVisibility(View.GONE);
-                    presenter.loadSeriesTranding(WEEKLY);
+                    presenter.loadSeriesTranding(WEEKLY, currentPage);
                     break;
                 case "Popular":
-                    search_bar.setVisibility(View.VISIBLE);
                     presenter.loadSeriesBySort(POPULAR, currentPage);
                     break;
                 case "Top Rated":
-                    search_bar.setVisibility(View.VISIBLE);
                     presenter.loadSeriesBySort(TOP_RATED, currentPage);
                     break;
             }
