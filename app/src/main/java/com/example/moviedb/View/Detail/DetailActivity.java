@@ -2,19 +2,26 @@ package com.example.moviedb.View.Detail;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.moviedb.Adapter.AdapterDetailImage;
+import com.example.moviedb.Adapter.AdapterVideoYoutube;
 import com.example.moviedb.Model.Detail;
 import com.example.moviedb.Model.ImagesDetail;
+import com.example.moviedb.Model.VideoDetail;
 import com.example.moviedb.R;
 import com.example.moviedb.Util.AppBarStateChangeListener;
+import com.example.moviedb.View.YPlayerActivity;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
@@ -34,9 +41,11 @@ import static com.example.moviedb.Util.VariableGlobal.TAG_ID;
 import static com.example.moviedb.Util.VariableGlobal.TAG_IMG;
 import static com.example.moviedb.Util.VariableGlobal.TAG_MEDIA_TYPE;
 import static com.example.moviedb.Util.VariableGlobal.TAG_TITLE;
+import static com.example.moviedb.Util.VariableGlobal.TAG_YOUTUBE_KEY;
 import static com.example.moviedb.Util.VariableGlobal.TV_TYPE;
 
-public class DetailActivity extends AppCompatActivity implements DetailPreserter.ViewDetail {
+public class DetailActivity extends AppCompatActivity implements DetailPreserter.ViewDetail,
+        AdapterVideoYoutube.OnVideoListClickListener {
     private DetailPreserter presenter;
     String path_poster;
     String media_type;
@@ -54,6 +63,8 @@ public class DetailActivity extends AppCompatActivity implements DetailPreserter
     @BindView(R.id.collapsing_toolbar) CollapsingToolbarLayout collapsing_toolbar;
     @BindView(R.id.collapseApp) AppBarLayout collapseApp;
     @BindView(R.id.img_detail) ViewPager mPager;
+    @BindView(R.id.content_video) LinearLayout content_video;
+    @BindView(R.id.recycler_video_detail) RecyclerView recycler_video_detail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +111,7 @@ public class DetailActivity extends AppCompatActivity implements DetailPreserter
         presenter = new DetailPreserter(this, DetailActivity.this);
         presenter.loadDetail(id, media_type);
         presenter.loadBackdrop(id, media_type);
+        presenter.loadTrailer(id, media_type);
 
     }
 
@@ -139,4 +151,27 @@ public class DetailActivity extends AppCompatActivity implements DetailPreserter
         }
     }
 
+    @Override
+    public void showVideoTrailer(VideoDetail videoDetail) {
+        if (videoDetail.getResults().size() <= 0) {
+            content_video.setVisibility(View.GONE);
+        } else {
+            content_video.setVisibility(View.VISIBLE);
+        }
+        AdapterVideoYoutube mAdapter = new AdapterVideoYoutube(videoDetail.getResults(), DetailActivity.this);
+        recycler_video_detail.setHasFixedSize(true);
+        recycler_video_detail.setNestedScrollingEnabled(false);
+        recycler_video_detail.setLayoutManager(new LinearLayoutManager(DetailActivity.this, LinearLayoutManager.HORIZONTAL, false));
+        recycler_video_detail.setAdapter(mAdapter);
+        mAdapter.setOnItemClickListener(this);
+    }
+
+    @Override
+    public void onItemVideoClicked(String id_key) {
+        Intent intent = new Intent(this, YPlayerActivity.class);
+        Bundle detail = new Bundle();
+        detail.putString(TAG_YOUTUBE_KEY, id_key);
+        intent.putExtras(detail);
+        startActivity(intent);
+    }
 }

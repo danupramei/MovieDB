@@ -5,6 +5,7 @@ import android.content.Context;
 import com.example.moviedb.Adapter.AdapterMoviesList;
 import com.example.moviedb.Model.Detail;
 import com.example.moviedb.Model.ImagesDetail;
+import com.example.moviedb.Model.VideoDetail;
 import com.example.moviedb.Rest.ApiClient;
 import com.example.moviedb.Rest.ApiInterface;
 import com.example.moviedb.Util.DbHelper;
@@ -93,8 +94,35 @@ public class DetailPreserter {
                 });
     }
 
+    void loadTrailer(int id, String media) {
+        apiInterface.getTrailer(id, media, API_KEY)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<VideoDetail>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                    }
+
+                    @Override
+                    public void onNext(VideoDetail videoDetail) {
+                        view.showVideoTrailer(videoDetail);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        view.showImageSlide(new ImagesDetail());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
     public interface ViewDetail {
         void showDetail(Detail detail, int status);
         void showImageSlide(ImagesDetail imagesDetail);
+        void showVideoTrailer(VideoDetail videoDetail);
     }
 }

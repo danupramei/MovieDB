@@ -4,6 +4,7 @@ import com.example.moviedb.Model.Detail;
 import com.example.moviedb.Model.ImagesDetail;
 import com.example.moviedb.Model.MoviesList;
 import com.example.moviedb.Model.SeriesList;
+import com.example.moviedb.Model.VideoDetail;
 
 import io.reactivex.Observable;
 import retrofit2.http.GET;
@@ -34,4 +35,6 @@ public interface ApiInterface {
     Observable<Detail> getDetail(@Path("detail_id") int detail_id, @Path("media") String media, @Query("api_key") String api_key);
     @GET("{media}/{detail_id}/images")
     Observable<ImagesDetail> getBackdrop(@Path("detail_id") int detail_id, @Path("media") String media, @Query("api_key") String api_key);
+    @GET("{media}/{detail_id}/videos")
+    Observable<VideoDetail> getTrailer(@Path("detail_id") int detail_id, @Path("media") String media, @Query("api_key") String api_key);
 }

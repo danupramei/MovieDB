@@ -88,4 +88,41 @@ public class ImageGlide {
         } catch (Exception e) {
         }
     }
+
+    public static void setImageThumb(Context context, String url, ImageView img) {
+        try {
+            if (!url.equals("")) {
+                RequestOptions options = new RequestOptions()
+                        .centerCrop()
+                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .skipMemoryCache(false);
+                Glide.with(context)
+                        .load(url)
+                        .apply(options)
+                        .into(new SimpleTarget<Drawable>() {
+                            @Override
+                            public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
+                                // Gambar siap di show
+                                img.setImageDrawable(resource);
+                            }
+
+                            @Override
+                            public void onLoadFailed(Drawable errorDrawable) {
+                                // Gambar gagal diload
+                                img.setImageDrawable(errorDrawable);
+                            }
+
+                            @Override
+                            public void onLoadStarted(Drawable placeholder) {
+                                // Gambar gagal mulai diload
+                                img.setImageDrawable(placeholder);
+                            }
+
+                        });
+            } else {
+
+            }
+        } catch (Exception e) {
+        }
+    }
 }

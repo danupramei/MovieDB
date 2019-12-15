@@ -12,10 +12,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".View.Detail.DetailActivity"
+        <activity android:name=".View.YPlayerActivity"
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
+        <activity
+            android:name=".View.Detail.DetailActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeDetail"
-            android:windowSoftInputMode="stateHidden|adjustResize"/>
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".MainActivity2"
             android:label="@string/app_name"

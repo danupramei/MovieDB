@@ -13,4 +13,5 @@ public interface VariableGlobal {
     String TAG_IMG = "img";
     String TAG_TITLE = "judul";
     String TAG_MEDIA_TYPE = "media_type";
+    String TAG_YOUTUBE_KEY = "VIDEO_ID";
 }
