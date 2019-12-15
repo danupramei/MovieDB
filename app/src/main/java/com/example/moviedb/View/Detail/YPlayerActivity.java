@@ -1,4 +1,4 @@
-package com.example.moviedb.View;
+package com.example.moviedb.View.Detail;
 
 import androidx.appcompat.app.AppCompatActivity;
 

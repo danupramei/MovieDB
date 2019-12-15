@@ -21,7 +21,6 @@ import com.example.moviedb.Model.ImagesDetail;
 import com.example.moviedb.Model.VideoDetail;
 import com.example.moviedb.R;
 import com.example.moviedb.Util.AppBarStateChangeListener;
-import com.example.moviedb.View.YPlayerActivity;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
